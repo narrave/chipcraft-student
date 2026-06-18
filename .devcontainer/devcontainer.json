@@ -1,6 +1,7 @@
 {
   "name": "ChipCraft Lab",
   "image": "ghcr.io/narrave/chipcraft:latest",
+  "overrideCommand": false,
   "forwardPorts": [6080],
   "portsAttributes": {
     "6080": {
@@ -9,6 +10,5 @@
       "protocol": "http"
     }
   },
-  "postStartCommand": "bash /workspaces/chipcraft-student/.devcontainer/start.sh",
   "remoteUser": "ubuntu"
 }
