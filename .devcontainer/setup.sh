@@ -12,8 +12,8 @@ else
 fi
 
 # Strip hidden CR / LF / spaces that Codespace secrets sometimes add
-if [ -n "${CHIPCRAFT_KEY:-}" ]; then
-    export CHIPCRAFT_KEY="$(printf '%s' "$CHIPCRAFT_KEY" | tr -d '\r\n ')"
+if [ -n "${CLASS_TOKEN:-}" ]; then
+    export CLASS_TOKEN="$(printf '%s' "$CLASS_TOKEN" | tr -d '\r\n ')"
 fi
 
 # Kill the earlier decrypt_watch that ran at container start (before ~/lab existed)
