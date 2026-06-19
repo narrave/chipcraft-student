@@ -13,9 +13,9 @@ LAB_REPO="https://github.com/narrave/chipcraft-lab-files.git"
 
 # Clone lab files if not already present, otherwise pull latest
 if [ -d "$HOME/lab/.git" ]; then
-    git -C "$HOME/lab" pull --quiet 2>/dev/null || true
+    /usr/bin/git -C "$HOME/lab" pull --quiet 2>/dev/null || true
 else
-    git -c credential.helper= clone "$LAB_REPO" "$HOME/lab" 2>/dev/null || true
+    /usr/bin/git -c credential.helper= clone "$LAB_REPO" "$HOME/lab" 2>/dev/null || true
 fi
 
 # Fetch key from Cloudflare Worker using CLASS_TOKEN
