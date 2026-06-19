@@ -1,6 +1,12 @@
 #!/bin/bash
-# Runs automatically when the Codespace starts (postStartCommand).
+# Runs when user attaches to Codespace (postAttachCommand).
 # Clones lab files, fetches key from Cloudflare Worker, starts decrypt_watch.
+# Skips if ~/labs/ already has decrypted files (already set up this session).
+
+if ls "$HOME/labs/"*.v 2>/dev/null | grep -q .; then
+    echo "[setup] Lab already ready — ~/labs/ has files."
+    exit 0
+fi
 
 WORKER_URL="https://chipcraft-key.nagajyothibonthagorla.workers.dev"
 LAB_REPO="https://github.com/narrave/chipcraft-lab-files.git"

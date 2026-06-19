@@ -11,5 +11,5 @@
     }
   },
   "remoteUser": "ubuntu",
-  "postStartCommand": "bash /workspaces/chipcraft-student/.devcontainer/setup.sh"
+  "postAttachCommand": "bash /workspaces/chipcraft-student/.devcontainer/setup.sh"
 }
