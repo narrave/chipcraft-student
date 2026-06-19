@@ -10,5 +10,6 @@
       "protocol": "http"
     }
   },
-  "remoteUser": "ubuntu"
+  "remoteUser": "ubuntu",
+  "postStartCommand": "bash /workspaces/chipcraft-student/.devcontainer/setup.sh"
 }
