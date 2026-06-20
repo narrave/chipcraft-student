@@ -1,10 +1,11 @@
-# Never commit plaintext Verilog — only encrypted files go to GitHub
-*.v
+# Block everything by default — only .enc files may be added
+*
 
-# Encrypted Verilog files ARE tracked
-!*.v.enc
+# Allow repo infrastructure (already tracked, never added fresh by students)
+!.gitignore
+!.devcontainer/
+!.devcontainer/**
+!Makefile
 
-# Simulation outputs — generated locally, not committed
-*.vcd
-*.vvp
-obj_dir/
+# The only data files allowed are encrypted Verilog
+!*.enc
