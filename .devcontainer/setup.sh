@@ -46,10 +46,9 @@ sleep 1
 mkdir -p "$HOME/labs"
 nohup /usr/local/bin/decrypt_watch.sh >> /tmp/lab-crypto.log 2>&1 &
 
-# Install pre-commit hook in ~/lab/ — where students actually commit from.
-# (git wrapper blocks commits outside ~/lab/, so the hook must live here)
-chmod +x /workspaces/chipcraft-student/.devcontainer/hooks/pre-commit
+# Point ~/lab to the read-only hook baked into the Docker image.
+# Students cannot edit /usr/local/lib/ — runs as unprivileged ubuntu user.
 /usr/bin/git -C "$HOME/lab" config core.hooksPath \
-    /workspaces/chipcraft-student/.devcontainer/hooks
+    /usr/local/lib/chipcraft-hooks
 
 echo "[setup] Lab setup complete — check ~/labs/ for your Verilog files."
