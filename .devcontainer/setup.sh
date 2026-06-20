@@ -46,8 +46,10 @@ sleep 1
 mkdir -p "$HOME/labs"
 nohup /usr/local/bin/decrypt_watch.sh >> /tmp/lab-crypto.log 2>&1 &
 
-# Install pre-commit hook so only .enc files can be committed
-git -C /workspaces/chipcraft-student config core.hooksPath .devcontainer/hooks
+# Install pre-commit hook in ~/lab/ — where students actually commit from.
+# (git wrapper blocks commits outside ~/lab/, so the hook must live here)
 chmod +x /workspaces/chipcraft-student/.devcontainer/hooks/pre-commit
+/usr/bin/git -C "$HOME/lab" config core.hooksPath \
+    /workspaces/chipcraft-student/.devcontainer/hooks
 
 echo "[setup] Lab setup complete — check ~/labs/ for your Verilog files."
