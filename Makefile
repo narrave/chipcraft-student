@@ -67,5 +67,10 @@ run:
 	@echo "$(GREEN)Done.$(RESET)"
 
 clean:
+ifdef FILE
+	rm -f $(LABS)/$(FILE).vvp $(LABS)/$(FILE).vcd
+	@echo "Cleaned $(FILE)."
+else
 	rm -f $(SIM_OUT) $(LABS)/*.vcd $(LABS)/*.vvp
 	@echo "Cleaned."
+endif
