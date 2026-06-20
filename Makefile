@@ -1,16 +1,21 @@
 # ChipCraft Lab — Verilog compile & simulate
 #
 # Usage (from any directory):
-#   make              – compile + simulate
-#   make wave         – compile + simulate + open GTKWave
-#   make compile      – compile only
-#   make sim          – run simulation only (after compile)
-#   make clean        – remove build outputs
+#   make                   – compile + simulate (all files with testbench)
+#   make wave              – compile + simulate + open GTKWave
+#   make compile           – compile only
+#   make sim               – run simulation only (after compile)
+#   make run FILE=counter  – compile + simulate a single file
+#   make counter           – compile + simulate counter.v directly
+#   make clean             – remove build outputs
 #
 # LABS can be overridden: make LABS=~/mydir
 
 # Directory where decrypted .v files live (tmpfs)
 LABS    ?= $(HOME)/labs
+
+# Single-file variable (for: make run FILE=counter)
+FILE    ?= counter
 
 # Auto-detect the testbench and all design files inside LABS
 TB      := $(firstword $(wildcard $(LABS)/tb_*.v))
@@ -24,7 +29,7 @@ GREEN  := \033[0;32m
 YELLOW := \033[0;33m
 RESET  := \033[0m
 
-.PHONY: all compile sim wave clean
+.PHONY: all compile sim wave run clean
 
 all: compile sim
 
@@ -45,6 +50,22 @@ wave: sim
 	@echo "$(YELLOW)Opening GTKWave …$(RESET)"
 	gtkwave $(VCD) &
 
+# Single-file: make run FILE=counter
+run:
+	@echo "$(GREEN)Compiling: $(FILE).v$(RESET)"
+	iverilog -g2012 -Wall -o $(LABS)/$(FILE).vvp $(LABS)/$(FILE).v
+	@echo "$(YELLOW)Running $(FILE) …$(RESET)"
+	vvp $(LABS)/$(FILE).vvp
+	@echo "$(GREEN)Done.$(RESET)"
+
+# Pattern rule: make counter  →  compiles + runs counter.v
+%: $(LABS)/%.v
+	@echo "$(GREEN)Compiling: $<$(RESET)"
+	iverilog -g2012 -Wall -o $(LABS)/$@.vvp $<
+	@echo "$(YELLOW)Running $@ …$(RESET)"
+	vvp $(LABS)/$@.vvp
+	@echo "$(GREEN)Done.$(RESET)"
+
 clean:
-	rm -f $(SIM_OUT) $(LABS)/*.vcd
+	rm -f $(SIM_OUT) $(LABS)/*.vcd $(LABS)/*.vvp
 	@echo "Cleaned."
