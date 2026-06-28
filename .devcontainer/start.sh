@@ -2,9 +2,11 @@
 export USER="${USER:-ubuntu}"
 export HOME="${HOME:-/home/ubuntu}"
 
-# Kill any leftover VNC from previous session
+# Kill any leftover VNC/websockify from previous session
 vncserver -kill :1 2>/dev/null || true
 rm -f /tmp/.X1-lock /tmp/.X11-unix/X1 2>/dev/null || true
+pkill -f websockify 2>/dev/null || true
+sleep 1
 
 mkdir -p "$HOME/.vnc" /tmp/runtime-ubuntu
 chmod 700 /tmp/runtime-ubuntu
