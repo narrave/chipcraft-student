@@ -14,17 +14,24 @@
 #   make counter           – compile + simulate counter.v directly
 #   make clean             – remove build outputs
 #
-# Source files are encrypted at rest as *.v.enc, anywhere under ~/lab/
-# (any subfolder depth — lab1/, lab2/, mywork/, etc.). Editing happens in
-# gvim, which decrypts/encrypts entirely in memory and never writes
-# plaintext .v files (see tools/chipcraft-crypt.vim). iverilog is a
-# separate process and can only read real files, so this Makefile decrypts
-# just-in-time right before compiling and shreds the plaintext the moment
-# iverilog exits — plaintext source exists on disk only for the duration
-# of that one compile step, not for the whole session.
+# Source files are encrypted at rest as *.v.enc, directly under ~/lab/ or
+# ~/lab/mywork/ — this Makefile is for self-contained single-testbench
+# designs like counter.v, NOT multi-file projects with their own build
+# system (e.g. tarang2_dp1 — use `chipcraft-tree shell tarang2_dp1` for
+# that instead, see HOW_IT_WORKS.md). Deliberately NOT recursive any
+# deeper than mywork/ — a fully recursive find would sweep in unrelated
+# designs nested elsewhere under ~/lab (e.g. tarang2_dp1's own .v files)
+# and compile them all together by mistake.
+#
+# Editing happens in gvim, which decrypts/encrypts entirely in memory and
+# never writes plaintext .v files (see tools/chipcraft-crypt.vim). iverilog
+# is a separate process and can only read real files, so this Makefile
+# decrypts just-in-time right before compiling and shreds the plaintext the
+# moment iverilog exits — plaintext source exists on disk only for the
+# duration of that one compile step, not for the whole session.
 #
 # Files are flattened by basename into LABS for compiling — two .v.enc
-# files with the same name in different subfolders would collide there.
+# files with the same name (one top-level, one in mywork/) would collide.
 #
 # LABS lives inside WORK (~/lab/.build) rather than as a sibling folder —
 # one top-level directory for students to think about, not two.
@@ -45,18 +52,20 @@ RESET  := \033[0m
 
 all: compile sim
 
-# Decrypt every *.v.enc anywhere under WORK (any subfolder depth) into LABS,
-# flattened by filename, just before compiling.
+# Decrypt *.v.enc from WORK's top level and WORK/mywork/ only (NOT a full
+# recursive find — see header comment) into LABS, flattened by filename,
+# just before compiling.
 _decrypt:
 	@mkdir -p $(LABS)
 	@test -f $(KEYFILE) || { echo "ChipCraft: no key at $(KEYFILE) — run inside the lab container."; exit 1; }
 	@KEY=$$(cat $(KEYFILE)); \
 	found=0; \
-	find $(WORK) -name '*.v.enc' -print 2>/dev/null | while IFS= read -r enc; do \
+	for enc in $(WORK)/*.v.enc $(WORK)/mywork/*.v.enc; do \
+	  [ -f "$$enc" ] || continue; \
 	  out="$(LABS)/$$(basename "$${enc%.enc}")"; \
-	  openssl enc -d -aes-256-cbc -pbkdf2 -k "$$KEY" -in "$$enc" -out "$$out" 2>/dev/null && echo ok; \
-	done | grep -q ok && found=1; \
-	[ "$$found" = "1" ] || { echo "ChipCraft: no .v.enc source files found anywhere under $(WORK)"; exit 1; }
+	  openssl enc -d -aes-256-cbc -pbkdf2 -k "$$KEY" -in "$$enc" -out "$$out" 2>/dev/null && found=1; \
+	done; \
+	[ "$$found" = "1" ] || { echo "ChipCraft: no .v.enc source files found in $(WORK) or $(WORK)/mywork"; exit 1; }
 
 _shred:
 	@find $(LABS) -maxdepth 1 -name '*.v' -exec shred -u {} \; 2>/dev/null \
