@@ -7,11 +7,23 @@
 
 LAB_REPO="https://github.com/narrave/chipcraft-lab-files.git"
 
-# Clone lab files if not already present, otherwise pull latest
+# Clone lab files if not already present, otherwise pull latest.
+# Clone into a temp dir first, then merge into ~/lab — cloning directly into
+# ~/lab fails because the .build tmpfs mount (declared in devcontainer.json)
+# already exists there, making git see a "non-empty" target.
 if [ -d "$HOME/lab/.git" ]; then
     /usr/bin/git -C "$HOME/lab" pull --quiet 2>/dev/null || true
 else
-    /usr/bin/git -c credential.helper= clone "$LAB_REPO" "$HOME/lab" 2>/dev/null || true
+    TMPCLONE=$(mktemp -d)
+    if /usr/bin/git -c credential.helper= clone "$LAB_REPO" "$TMPCLONE" 2>/dev/null; then
+        mkdir -p "$HOME/lab"
+        shopt -s dotglob
+        mv "$TMPCLONE"/* "$HOME/lab"/ 2>/dev/null
+        shopt -u dotglob
+        rmdir "$TMPCLONE" 2>/dev/null
+    else
+        rm -rf "$TMPCLONE"
+    fi
 fi
 
 # Fetch the key (CLASS_TOKEN Codespace secret → Cloudflare Worker) and
