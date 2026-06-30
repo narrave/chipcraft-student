@@ -9,7 +9,7 @@ LAB_REPO="https://github.com/narrave/chipcraft-lab-files.git"
 
 # Clone lab files if not already present, otherwise pull latest.
 # Clone into a temp dir first, then merge into ~/lab — cloning directly into
-# ~/lab fails because the .build tmpfs mount (declared in devcontainer.json)
+# ~/lab fails because the build tmpfs mount (declared in devcontainer.json)
 # already exists there, making git see a "non-empty" target.
 if [ -d "$HOME/lab/.git" ]; then
     /usr/bin/git -C "$HOME/lab" pull --quiet 2>/dev/null || true
@@ -34,5 +34,11 @@ fi
 # Students cannot edit /usr/local/lib/ — runs as unprivileged ubuntu user.
 /usr/bin/git -C "$HOME/lab" config core.hooksPath \
     /usr/local/lib/chipcraft-hooks
+
+# entrypoint.sh already tried this at container start, but the key isn't
+# available that early in Codespace mode (CLASS_TOKEN arrives only after
+# attach) — run it again now that the key actually exists. See the script's
+# own header comment for the security tradeoff this represents.
+/usr/local/bin/chipcraft-decrypt-all.sh >> /tmp/lab-crypto.log 2>&1 &
 
 echo "[setup] Lab setup complete — open *.v.enc files under ~/lab/ with gvim to edit."

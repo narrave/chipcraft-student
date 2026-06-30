@@ -3,7 +3,7 @@
   "image": "ghcr.io/narrave/chipcraft:latest",
   "overrideCommand": false,
   "mounts": [
-    "type=tmpfs,destination=/home/ubuntu/lab/.build,tmpfs-size=2147483648,tmpfs-mode=1777"
+    "type=tmpfs,destination=/home/ubuntu/lab/build,tmpfs-size=2147483648,tmpfs-mode=1777"
   ],
   "forwardPorts": [6080],
   "portsAttributes": {
