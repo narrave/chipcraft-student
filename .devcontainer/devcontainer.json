@@ -2,8 +2,8 @@
   "name": "ChipCraft Lab",
   "image": "ghcr.io/narrave/chipcraft:latest",
   "overrideCommand": false,
-  "mounts": [
-    "type=tmpfs,destination=/home/ubuntu/lab/build,tmpfs-size=2147483648,tmpfs-mode=1777"
+  "runArgs": [
+    "--tmpfs", "/home/ubuntu/lab/build:rw,exec,size=2g,uid=1000,gid=1000,mode=0700"
   ],
   "forwardPorts": [6080],
   "portsAttributes": {
