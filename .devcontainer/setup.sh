@@ -18,10 +18,10 @@ export CLASS_TOKEN=vlsi2026
 # WORK fails because the build tmpfs mount already exists there, making git
 # see a "non-empty" target.
 if [ -d "$WORK/.git" ]; then
-    /usr/bin/git -C "$WORK" pull --quiet 2>/dev/null || true
+    timeout 20 /usr/bin/git -C "$WORK" -c credential.helper= pull --quiet 2>/dev/null || true
 else
     TMPCLONE=$(mktemp -d)
-    if /usr/bin/git -c credential.helper= clone "$LAB_REPO" "$TMPCLONE" 2>/dev/null; then
+    if timeout 30 /usr/bin/git -c credential.helper= clone "$LAB_REPO" "$TMPCLONE" 2>/dev/null; then
         mkdir -p "$WORK"
         shopt -s dotglob
         mv "$TMPCLONE"/* "$WORK"/ 2>/dev/null
