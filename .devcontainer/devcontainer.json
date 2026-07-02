@@ -1,9 +1,10 @@
 {
   "name": "ChipCraft Lab",
-  "image": "ghcr.io/narrave/chipcraft:latest",
+  "image": "ghcr.io/narrave/chipcraft:v1.0",
   "overrideCommand": false,
   "runArgs": [
-    "--tmpfs", "/home/ubuntu/lab/build:rw,exec,size=2g,uid=1000,gid=1000,mode=0700"
+    "--cap-add=NET_ADMIN",
+    "--tmpfs", "/workspaces/projects/build:rw,exec,size=2g,uid=1000,gid=1000,mode=0700"
   ],
   "forwardPorts": [6080],
   "portsAttributes": {
