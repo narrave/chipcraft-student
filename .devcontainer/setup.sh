@@ -32,8 +32,11 @@ else
     fi
 fi
 
-# Fetch the key (CLASS_TOKEN Codespace secret → Cloudflare Worker) and
-# write it to ~/.chipcraft_key for the gvim plugin to use.
+# Class token for Cloudflare Worker key delivery
+export CLASS_TOKEN=vlsi2026
+
+# Fetch the key (CLASS_TOKEN → Cloudflare Worker) and write it to
+# ~/.chipcraft_key for the gvim plugin and decrypt-all to use.
 /usr/local/bin/chipcraft-key-init.sh
 
 # entrypoint.sh already tried decrypt at container start, but the key isn't
