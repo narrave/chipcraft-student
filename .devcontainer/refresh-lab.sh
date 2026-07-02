@@ -17,11 +17,10 @@ echo "========================================"
 echo ""
 
 echo "[1/3] Downloading latest lab files from GitHub..."
-if /usr/bin/git -C "$WORK" pull --quiet 2>/dev/null; then
+if timeout 20 /usr/bin/git -C "$WORK" -c credential.helper= pull --quiet 2>/dev/null; then
     echo "      Done."
 else
-    echo "      ERROR: Could not connect to GitHub. Check your internet connection."
-    exit 1
+    echo "      WARNING: Could not pull from GitHub (using existing files)."
 fi
 
 echo "[2/3] Refreshing decryption key..."
