@@ -10,6 +10,8 @@ BUILD="${BUILD:-/workspaces/projects/build}"
 LAB_REPO="https://github.com/narrave/chipcraft-lab-files.git"
 
 export WORK BUILD
+# Class token for Cloudflare Worker key delivery
+export CLASS_TOKEN=vlsi2026
 
 # Clone lab files if not already present, otherwise pull latest.
 # Clone into a temp dir first, then merge into WORK — cloning directly into
@@ -32,8 +34,7 @@ else
     fi
 fi
 
-# Class token for Cloudflare Worker key delivery
-export CLASS_TOKEN=vlsi2026
+
 
 # Fetch the key (CLASS_TOKEN → Cloudflare Worker) and write it to
 # ~/.chipcraft_key for the gvim plugin and decrypt-all to use.
